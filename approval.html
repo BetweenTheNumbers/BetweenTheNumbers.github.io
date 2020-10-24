@@ -1,0 +1,106 @@
+<html>
+<head>
+  <script src = 'https://d3js.org/d3.v5.min.js'></script>
+  <script src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js'></script>
+</head>
+
+<body style = 'font-family: Verdana; font-size: 0.75em'>
+  <input id = 'searchname' type = 'text' placeholder = 'Enter a Player...'></input>
+  <input id = 'searchteam' type = 'text' placeholder = 'Enter a Team...'></input>
+  <select id = 'selectmetric'>
+    <option value = 'a'>Approval</option>
+    <option value = 'p'>Polarity</option>
+    <option value = 's'>Subjectivity</option>
+  </select>
+  <input id = 'searchbutton' onclick = 'search()' type = 'button' value = 'Filter'></input>
+  <br /><span id = 'descrip'></span>
+  <canvas id = 'chart'></canvas>
+</body>
+
+<script type = 'text/javascript'>
+/* 
+  based on this tutorial by Peter Cook: 
+    http://www.createwithdata.com/chartjs-and-csv/
+*/
+
+d3.csv('https://raw.githubusercontent.com/BetweenTheNumbers/twitternlp/master/nhl_nlp_sentiment_testdata.csv')
+  .then(makeChart);
+
+var _players = null;
+var mychart = null;
+var inputname = null;
+var inputteam = null;
+var metric = document.getElementById('selectmetric');
+var chosenmetric = metric.options[metric.selectedIndex].value;
+var m = null;
+
+function search () {
+  inputname = document.getElementById('searchname').value.toLowerCase();
+  inputteam = document.getElementById('searchteam').value.toLowerCase();
+  metric = document.getElementById('selectmetric');
+  chosenmetric = metric.options[metric.selectedIndex].value;
+  makeChart(_players.filter(function (p) { return (p.playername.toLowerCase().indexOf(inputname) !== -1 && p.teamname.toLowerCase().indexOf(inputteam) !== -1) }));
+}
+
+function makeChart (players) {
+
+  if (mychart) {
+    mychart.destroy();
+  }
+
+  if (!_players)
+    _players = players;
+  players = players.sort((a, b) => (b.approvalmean - a.approvalmean || b.polaritymean - a.polaritymean || a.playername - b.playername))
+  approvalData = players.map(function(d) {return Math.round(d.approvalmean * 1000, 0)});
+  polarityData = players.map(function(d) {return Math.round(d.polaritymean * 100, 0)});
+  subjectivityData = players.map(function(d) {return Math.round(d.subjectivitymean * 100, 0)});
+  playerColors = players.map(function(d) {return d.approvalmean < 0 ? '#c00' : '#0c6';});
+
+  switch(chosenmetric) {
+    case 'p': 
+	m = polarityData; 
+        document.getElementById('descrip').innerHTML = '<b>Polarity</b> = sentiment, from 0 (Bad) to 100 (Good)';
+	break;
+    case 's': 
+	m = subjectivityData; 
+        document.getElementById('descrip').innerHTML = '<b>Subjectivity</b> = least subjective to most, from 0 (Very Objective) to 100 (Very Subjective)';
+	break;
+    case 'a': 
+	m = approvalData; 
+        document.getElementById('descrip').innerHTML = '<b>Approval</b> = Polarity weighed by Subjectivity, from -100 (Bad) to 100 (Good)';
+	break;
+  }
+  
+  playerLabels = players.map(function(d) {return d.playername + ' (' + d.teamname.match(/\b(\w)/g).join('') + ')'});
+
+  mychart = new Chart('chart', {
+    type: 'horizontalBar',
+    data: {
+      labels: playerLabels,
+      datasets: [{
+        data: m,
+        backgroundColor: playerColors
+      }]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+              position: 'top' ,
+              gridLines: {
+                  zeroLineColor: '#000',
+                  zeroLineWidth: 2,
+              },
+              ticks: {
+                  min: -100,
+                  max: 100
+              }   
+          }]
+      },
+      legend: {
+        display: false
+      }
+    }
+  });
+}
+</script>
+</html>

@@ -1,0 +1,121 @@
+<html>
+<head>
+	<script src = 'https://d3js.org/d3.v5.min.js'></script>
+	<script src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js'></script>
+        <script src = 'https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js'></script>
+</head>
+
+<body style = 'font-family: Verdana; font-size: 0.75em'>
+<span id = 'loading'>Loading... please wait about 10 seconds</span>
+<div id = 'main'>
+	<span id = 'playername' style = 'font-weight:bold'></span><br />
+	<span>Approval Score (Daily Avg)</span>
+	<br /><span id = 'descrip'></span>
+	<canvas id = 'chart'></canvas>
+</div>
+</body>
+
+<script type = 'text/javascript'>
+/* 
+  based on this tutorial by Peter Cook: 
+    http://www.createwithdata.com/chartjs-and-csv/
+*/
+
+document.getElementById('main').style.visibility = 'hidden';
+
+d3.csv('https://raw.githubusercontent.com/BetweenTheNumbers/hockeytwitter/master/thornton_tweets.csv')
+	.then(makeChart);
+
+var _players = null;
+var mychart = null;
+
+function makeChart (players) {
+
+	if (mychart) {
+		mychart.destroy();
+  	}
+
+  	if (!_players)
+    		_players = players;
+
+  players = players.filter(function(d) { return d.tweet.toLowerCase().includes('joe thornton') });
+  players = players.map(function(d) { d.shortdate = new Date(d.tdate.substring(0, 10)); return d; });
+  players = players.sort((a, b) => new Date(a.shortdate) - new Date(b.shortdate))
+  var start = new Date(players[0].shortdate);
+  var now = new Date();
+  var average = 0;
+  var daily = [];
+	
+  while (start < now) {
+	pl = players.filter(function(d) { return d.shortdate.toString().substring(0, 10) == start.toString().substring(0, 10) });
+	average = pl.reduce(function (total, currentValue) { return total + parseFloat(currentValue.approval)}, 0) / pl.length;
+	var t = null;
+	if (pl.length)
+		t = pl.reduce((max, p) => max.approval > Math.abs(p.approval) ? max : p);
+	daily.push({date: start.toString().substring(0, 10), approval: average, toptweet: t ? t.tweet : null });
+	start.setDate(start.getDate() + 1);
+  }
+
+  var overall = players.reduce(function (total, currentValue) { return total + parseFloat(currentValue.approval)}, 0) / players.length;
+  document.getElementById('playername').innerHTML = players[0].playername + ': ' + overall.toFixed(3) * 1000;
+
+  mychart = new Chart('chart', {
+  	type: 'line',
+    	data: {
+    		labels: daily.map(function(d) { return d.date.toString().substring(0, 10) }),
+      		datasets: [{
+        		data: daily.map(function(d) { d.y = parseFloat(d.approval.toFixed(4)) * 1000; d.value = d.toptweet; return d; })
+      		}]
+    	},
+    	options: {
+		tooltips: {
+      			callbacks: {
+        			label: function(tooltipItem, data) {
+          				var item = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					return 'Avg: ' + item.y.toFixed(0) + ' | Top Tweet: ' + item.value;
+        			}
+      			}
+    		},
+      		scales: {
+        		xAxes: [{
+				position: 'top'
+        		}],
+        		yAxes: [{
+				id: 'y-axis',
+				gridLines: {
+      	 				zeroLineColor: '#000',
+                			zeroLineWidth: 2,
+                			ticks: {
+                				min: -100,
+						max: 100
+					} 
+        			}
+        		}],
+                },
+		legend: {
+      			display: false
+      		},
+		annotation: {
+            		annotations: [{
+            		type: 'line',
+            		mode: 'horizontal',
+            		scaleID: 'y-axis',
+            		value: 30, //having issues populating this dynamically from 'overall' var
+            		borderColor: 'rgb(0, 255, 0)',
+            		borderWidth: 2,
+            		label: {
+              			enabled: false,
+              			content: 'Overall Avg'
+            		}
+          		}]
+		}
+      }
+      
+      
+  });
+
+  document.getElementById('main').style.visibility = 'visible';
+  document.getElementById('loading').style.display = 'none';
+}
+</script>
+</html>
