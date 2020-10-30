@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup as soup
 import datetime
 import pandas as pd
 from textblob import TextBlob           
-import random
 
 pages = [soup(wiki.WikipediaPage(pageid=20744511).html(), 'html.parser')
          , soup(wiki.WikipediaPage(pageid=20744562).html(), 'html.parser')]
