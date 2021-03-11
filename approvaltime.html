@@ -42,7 +42,7 @@ function makeChart (players) {
   players = players.map(function(d) { d.shortdate = new Date(d.tdate.substring(0, 10)); return d; });
   players = players.sort((a, b) => new Date(a.shortdate) - new Date(b.shortdate))
   var start = new Date(players[0].shortdate);
-  var now = new Date();
+  var now = new Date('2020-06-01T00:00:00');
   var average = 0;
   var daily = [];
 	
