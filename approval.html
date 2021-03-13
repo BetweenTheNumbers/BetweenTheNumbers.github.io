@@ -34,6 +34,7 @@ var metric = document.getElementById('selectmetric');
 var chosenmetric = metric.options[metric.selectedIndex].value;
 var m = null;
 
+//perform a basic partial string-match text search
 function search () {
   inputname = document.getElementById('searchname').value.toLowerCase();
   inputteam = document.getElementById('searchteam').value.toLowerCase();
@@ -42,6 +43,7 @@ function search () {
   makeChart(_players.filter(function (p) { return (p.playername.toLowerCase().indexOf(inputname) !== -1 && p.teamname.toLowerCase().indexOf(inputteam) !== -1) }));
 }
 
+//build or re-build the JS data visualization, both on init load, or if the data filtering is updated
 function makeChart (players) {
 
   if (mychart) {
@@ -73,6 +75,7 @@ function makeChart (players) {
   
   playerLabels = players.map(function(d) {return d.playername + ' (' + d.teamname.match(/\b(\w)/g).join('') + ')'});
 
+  //create a new Chart.js instance
   mychart = new Chart('chart', {
     type: 'horizontalBar',
     data: {
