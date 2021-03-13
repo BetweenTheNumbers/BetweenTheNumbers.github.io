@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 from textblob import TextBlob           
 
-#use BeautifulSoup to parse Wikipedia's HTML pages of active NHL rosters
+#use BeautifulSoup to parse Wikipedia's HTML pages of active NHL rosters, by conference
 pages = [soup(wiki.WikipediaPage(pageid=20744511).html(), 'html.parser')
          , soup(wiki.WikipediaPage(pageid=20744562).html(), 'html.parser')]
 players = []
