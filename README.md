@@ -1,5 +1,5 @@
-# twitternlp
-gathering tweets and performing sentiment analysis
+# Twitter NLP Sentiment Analysis
+Gathering tweets and performing sentiment analysis on players in the NHL.
 
 Note: GetOldTweets3 pkg requests respond with HTTP 404 error (Twitter Search API no longer available without Token)
 
