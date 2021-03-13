@@ -29,16 +29,15 @@ d3.csv('https://raw.githubusercontent.com/BetweenTheNumbers/twitternlp/main/thor
 var _players = null;
 var mychart = null;
 
+//create the chart on init load, or wipe existing one and re-build it
 function makeChart (players) {
-
-	if (mychart) {
+	if (mychart)
 		mychart.destroy();
-  	}
 
   	if (!_players)
     		_players = players;
 
-  players = players.filter(function(d) { return d.tweet.toLowerCase().includes('joe thornton') });
+  players = players.filter(function(d) { return d.tweet.toLowerCase().includes('joe thornton') });	//for testing demo purposes, only use Jumbo Joe
   players = players.map(function(d) { d.shortdate = new Date(d.tdate.substring(0, 10)); return d; });
   players = players.sort((a, b) => new Date(a.shortdate) - new Date(b.shortdate))
   var start = new Date(players[0].shortdate);
@@ -46,6 +45,7 @@ function makeChart (players) {
   var average = 0;
   var daily = [];
 	
+  //build the Daily snapshot metrics
   while (start < now) {
 	pl = players.filter(function(d) { return d.shortdate.toString().substring(0, 10) == start.toString().substring(0, 10) });
 	average = pl.reduce(function (total, currentValue) { return total + parseFloat(currentValue.approval)}, 0) / pl.length;
@@ -56,6 +56,7 @@ function makeChart (players) {
 	start.setDate(start.getDate() + 1);
   }
 
+  //calculate the all-time Approval mean
   var overall = players.reduce(function (total, currentValue) { return total + parseFloat(currentValue.approval)}, 0) / players.length;
   document.getElementById('playername').innerHTML = players[0].playername + ': ' + overall.toFixed(3) * 1000;
 
@@ -114,6 +115,7 @@ function makeChart (players) {
       
   });
 
+  //hide the chart while still loading
   document.getElementById('main').style.visibility = 'visible';
   document.getElementById('loading').style.display = 'none';
 }
