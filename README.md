@@ -1,5 +1,6 @@
 # Twitter NLP Sentiment Analysis
 Gathering tweets and performing sentiment analysis on players in the NHL.
+For both Data Visualizations, the goal was to create a Demo that's lightweight, fast, and simple. In a production environment, all the Twitter data should be stored and retrieved from a database.
 
 Note: GetOldTweets3 pkg requests respond with HTTP 404 error (Twitter Search API no longer available without Token)
 
