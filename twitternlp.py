@@ -43,7 +43,7 @@ for p in players:
     tweets = got.manager.TweetManager.getTweets(criteria)
     print(p[0], p[1], len(tweets))
 
-    #get all the tweet metrics per-tweet
+    #get all the tweet metrics per-tweet, and calculate the NLP metrics using TextBlob library
     for t in tweets:
         s = TextBlob(t.text).sentiment                  
         approval = s.polarity * (1 - s.subjectivity)
