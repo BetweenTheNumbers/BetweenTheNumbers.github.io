@@ -1,5 +1,6 @@
 # twitternlp.py
-# 2 part process to 1) scrape NHL rosters from Wikipedia, and 2) retrieve tweets mentioning them
+# extracts data by 1) scraping NHL rosters from Wikipedia, and 2) retrieving tweets mentioning them
+# performs natural language processing (NLP) analysis on each tweet for scoring and visualization use
 
 import GetOldTweets3 as got             
 import wikipedia as wiki                
