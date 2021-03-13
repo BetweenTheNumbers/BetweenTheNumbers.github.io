@@ -3,8 +3,8 @@ Gathering tweets and performing sentiment analysis on players in the NHL.
 
 Note: GetOldTweets3 pkg requests respond with HTTP 404 error (Twitter Search API no longer available without Token)
 
-[(Link) Multiple Players Approval](https://betweenthenumbers.github.io/approval.html)
+[(Web App) Multiple Players Approval](https://betweenthenumbers.github.io/approval.html)
 
-[(Link) Single Player Approval Over Time](https://betweenthenumbers.github.io/approvaltime.html)
+[(Web App) Single Player Approval Over Time](https://betweenthenumbers.github.io/approvaltime.html)
 
-[(Link) Source Code](https://github.com/BetweenTheNumbers/BetweenTheNumbers.github.io)
+[(Github) Source Code](https://github.com/BetweenTheNumbers/BetweenTheNumbers.github.io)
