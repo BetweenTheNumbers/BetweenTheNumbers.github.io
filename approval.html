@@ -50,6 +50,7 @@ function makeChart (players) {
     mychart.destroy();
   }
 
+  //check if the data is actually loaded before mapping everything
   if (!_players)
     _players = players;
   players = players.sort((a, b) => (b.approvalmean - a.approvalmean || b.polaritymean - a.polaritymean || a.playername - b.playername))
